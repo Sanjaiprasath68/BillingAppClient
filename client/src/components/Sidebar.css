@@ -1,0 +1,16 @@
+.sidebar {
+    transform: translateX(-250px); /* Hide sidebar off-screen */
+  }
+  
+  .sidebar.show {
+    transform: translateX(0); /* Show sidebar */
+  }
+  
+  .sidebar.hide {
+    transform: translateX(-250px); /* Hide sidebar off-screen */
+  }
+
+  .custom-sidebar{
+    border-radius: 8px;
+  }
+  

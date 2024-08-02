@@ -4,7 +4,7 @@ import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // React Router for navigation
 
-const LoginPage = () => {
+const LoginPage = ({ signin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,6 +19,8 @@ const LoginPage = () => {
       if (response.data.success) {
         // Redirect to homepage on successful login
         navigate('/home'); // Adjust the path as necessary
+        signin(); // Optional: Trigger sign-in state change in parent component
+   
       } else {
         setError('Invalid credentials');
       }

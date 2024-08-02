@@ -131,7 +131,7 @@ const BillPage = () => {
         <Navbar toggleSidebar={toggleSidebar} />
         <div className="flex-grow-1 bg-dark billdetails">
           <Container className="mt-4">
-            <h2 style={{ color: "white", marginBottom: '15px' }}>Customer Details</h2>
+            <h2 style={{ color: "white", marginBottom: '15px' }}>Customers Details</h2>
             <Form.Group controlId="search" className="mb-4">
               <Form.Control
                 type="text"

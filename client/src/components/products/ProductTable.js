@@ -16,7 +16,7 @@ const ProductTable = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/items')
+    axios.get('https://online-billing-app.vercel.app/items')
       .then(response => setProducts(response.data))
       .catch(error => console.error('Error fetching products:', error));
   }, []);

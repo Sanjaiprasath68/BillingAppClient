@@ -25,8 +25,8 @@ const App = () => {
               <Home />
             </Protected>} />
         <Route path='/' element={<LoginPage signin={signin}/>} />
-        <Route path='/billpage' element={<BillPage />}
-        <Route path='/items' element={<Items />}
+        <Route path='/billpage' element={<BillPage />} />
+        <Route path='/items' element={<Items />} />
       </Routes>
     </BrowserRouter>
   );

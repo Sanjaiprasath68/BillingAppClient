@@ -25,18 +25,8 @@ const App = () => {
               <Home />
             </Protected>} />
         <Route path='/' element={<LoginPage signin={signin}/>} />
-        <Route
-         path='/billpage'
-          element={
-            <Protected isSignedIn={isSignedIn}>
-        <BillPage />
-        </Protected> }/>
-        <Route
-         path='/items'
-          element={
-            <Protected isSignedIn={isSignedIn}>
-          <Items />
-          </Protected>} />
+        <Route path='/billpage' element={<BillPage />}
+        <Route path='/items' element={<Items />}
       </Routes>
     </BrowserRouter>
   );

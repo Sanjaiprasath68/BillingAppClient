@@ -1,8 +1,8 @@
-// src/LoginPage.js
 import React, { useState } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // React Router for navigation
+import './LoginPage.css'; // Import custom CSS
 
 const LoginPage = ({ signin }) => {
   const [username, setUsername] = useState('');
@@ -20,7 +20,7 @@ const LoginPage = ({ signin }) => {
         // Redirect to homepage on successful login
         navigate('/home'); // Adjust the path as necessary
         signin(); // Optional: Trigger sign-in state change in parent component
-   
+  
       } else {
         setError('Invalid credentials');
       }
@@ -31,8 +31,8 @@ const LoginPage = ({ signin }) => {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-      <div className="w-100" style={{ maxWidth: '400px' }}>
+    <Container className="d-flex justify-content-center align-items-center login-container">
+      <div className="login-form">
         <h2 className="text-center mb-4">Login</h2>
         {error && <Alert variant="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit}>

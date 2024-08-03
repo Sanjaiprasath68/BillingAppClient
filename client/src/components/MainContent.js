@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './MainContent.css';
-import { Modal, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import logo from './logoUrl.png'; // Ensure this path matches the actual location of your logo
 
 const MainContent = () => {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [customerName, setCustomerName] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
 
   useEffect(() => {
     axios.get('https://online-billing-app.vercel.app/items')
@@ -47,105 +44,158 @@ const MainContent = () => {
   ).toFixed(2);
 
   const handleCreateBill = () => {
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleGenerateBill = () => {
-    const serialNumber = new Date().getTime(); // Generating a unique serial number based on timestamp
-    const currentDateTime = new Date().toLocaleString(); // Current date and time
+    // Default customer details
+    const customerName = 'Default Customer';
+    const contactNumber = '1234567890';
+    const createdAt = new Date(); // Current date and time
     
     const billData = {
       customerName,
       contactNumber,
       selectedProducts,
       totalAmount,
-      serialNumber,
-      dateTime: currentDateTime,
-      printDetails: generatePrintContent({ customerName, contactNumber, selectedProducts, totalAmount, serialNumber, dateTime: currentDateTime })
+      createdAt, // Adding created date and time
+      printDetails: generatePrintContent({
+        customerName,
+        contactNumber,
+        selectedProducts,
+        totalAmount,
+        createdAt
+      })
     };
-    console.log('Bill Data:', billData); // Log the bill data
+
+    console.log('Bill Data:', billData); // Log the bill data for debugging
 
     axios.post('https://online-billing-app.vercel.app/bills', billData)
       .then(response => {
         console.log('Bill stored successfully:', response.data);
         handlePrint(billData);
       })
-      .catch(error => console.error('Error storing bill:', error));
-
-    setShowModal(false);
+      .catch(error => {
+        console.error('Error storing bill:', error.response ? error.response.data : error.message);
+      });
   };
 
   const generatePrintContent = (billData) => {
+    const date = new Date(billData.createdAt).toLocaleString();
+
     return `
-      <html>
-      <head>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Print</title>
         <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-          @media print {
-            .no-print {
-              display: none;
+            @media print {
+                body {
+                    width: 3in;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 0.75em; /* Scale down font size for small paper */
+                }
+                .no-print {
+                    display: none;
+                }
             }
-          }
-          .logo {
-            max-width: 300px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top:-45px;
-          }
-          h3{
-            text-align: center;
-            margin-top:-25px;
-          }
+            .logo {
+                max-width: 2.5in; /* Adjusted to fit 3-inch width */
+                display: block;
+                margin: 0 auto;
+            }
+            h3 {
+                text-align: center;
+                margin: 0;
+                font-weight: 600; /* Semi-bold font weight */
+                font-family: 'Arial', sans-serif;
+            }
+            h6 {
+                text-align: center;
+                margin: 0;
+                font-size: 0.9em; /* Slightly larger font size for readability */
+            }
+            .seal-space {
+                height: 0.5in;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 0.5in;
+                font-size: 0.75em;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.6em; /* Adjust font size for small paper */
+            }
+            th, td {
+                padding: 0.1in; /* Adjusted padding to fit content */
+                text-align: center;
+            }
+            th {
+                background-color: #f8f9fa;
+                font-weight: 600; /* Semi-bold font weight */
+            }
+            .table-bordered th, .table-bordered td {
+                border: 1px solid black;
+            }
+            #amt {
+                font-weight: 800; /* Bold font weight for total amount */
+            }
+            @media print {
+                table {
+                    font-size: 0.6em; /* Further reduce font size if needed */
+                }
+                th, td {
+                    padding: 0.05in; /* Reduce padding to fit content */
+                }
+            }
         </style>
-      </head>
-      <body>
+    </head>
+    <body>
         <div class="container">
-          <img src="${logo}" alt="Logo" class="logo"/> <!-- Use the imported logo -->
-          <h3>Store Name</h3>
-          <p><strong>Serial Number:</strong> ${billData.serialNumber}</p>
-          <p><strong>Date and Time:</strong> ${billData.dateTime}</p>
-          <p><strong>Customer Name:</strong> ${billData.customerName}</p>
-          <p><strong>Contact Number:</strong> ${billData.contactNumber}</p>
-          <h2>Selected Products</h2>
-          <table class="table table-dark table-striped">
-            <thead>
-              <tr>
-                <th>S.No.</th>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>GST Amount</th>
-                <th>Total (per unit)</th>
-                <th>Quantity</th>
-                <th>Total for this Product</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${billData.selectedProducts.map((product, index) => `
-                <tr>
-                  <td>${index + 1}</td>
-                  <td>${product.name}</td>
-                  <td>${product.price.toFixed(2)}</td>
-                  <td>${product.gst.toFixed(2)}</td>
-                  <td>${product.total.toFixed(2)}</td>
-                  <td>${product.quantity}</td>
-                  <td>${(product.total * product.quantity).toFixed(2)}</td>
-                </tr>
-              `).join('')}
-              <tr>
-                <td colspan="6" class="text-end fw-bold">Total Amount:</td>
-                <td>${billData.totalAmount}</td>
-              </tr>
-            </tbody>
-          </table>
+            <img src="${logo}" alt="Logo" class="logo"/> <!-- Use the imported logo -->
+            <h3>குமரன் பவன்</h3>
+            <h6>15/15, தாழையாத்தம் பஜார்,<br>(சௌத் இண்டியன் பேங்க் எதிரில்) குடியாத்தம்.</h6>
+            
+            <h3 class="mt-2">Bill Amount</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Total (per unit)</th>
+                        <th>Quantity</th>
+                        <th>Total for this Product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${billData.selectedProducts.map((product, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${product.name}</td>
+                            <td>${product.price.toFixed(2)}</td>
+                            <td>${product.total.toFixed(2)}</td>
+                            <td>${product.quantity}</td>
+                            <td>${(product.total * product.quantity).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                    <tr>
+                        <td colspan="5" class="text-right font-weight-bold">Total Amount:</td>
+                        <td id="amt">${billData.totalAmount}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Date and Time:</strong> ${date}</p> <!-- Displaying the date and time -->
+            <div class="seal-space"></div>
+            <div class="footer">
+                ***Thank You***
+            </div>
         </div>
-      </body>
-      </html>
+    </body>
+    </html>
+    
     `;
   };
 
@@ -260,42 +310,10 @@ const MainContent = () => {
               <button className="btn btn-primary" onClick={handleCreateBill}>Create Bill</button>
             </>
           ) : (
-            <p>No products selected.</p>
+            <p>No products selected yet.</p>
           )}
         </div>
       </div>
-
-      <Modal show={showModal} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Generate Bill</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="mb-3">
-            <label htmlFor="customerName" className="form-label">Customer Name</label>
-            <input
-              type="text"
-              className="form-control"
-              id="customerName"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="contactNumber" className="form-label">Contact Number</label>
-            <input
-              type="text"
-              className="form-control"
-              id="contactNumber"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleGenerateBill}>Generate Bill</Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };

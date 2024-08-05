@@ -39,122 +39,62 @@ const BillPage = () => {
     const printWindow = window.open('', '', 'height=600,width=800');
     const printContent = `
     <!DOCTYPE html>
-    <!DOCTYPE html>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Print Bill</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    @media print {
-      body {
-        width: 3in;
-        margin: 0;
-        padding: 0;
-        font-size: 0.75em; /* Scale down font size for small paper */
-        font-family: 'Arial', sans-serif; /* Ensure consistent font */
-      }
-      .no-print {
-        display: none;
-      }
-    }
-    .logo {
-      max-width: 2.5in; /* Adjusted to fit 3-inch width */
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    h3 {
-      text-align: center;
-      margin-top: -10px;
-      font-weight: 600; /* Semi-bold font weight */
-    }
-    h6 {
-      text-align: center;
-      margin-bottom: 0; /* Removes default margin at the bottom */
-    }
-    .seal-space {
-      height: 0.5in;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 0.5in;
-      font-size: 0.75em;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.6em; /* Adjust font size for small paper */
-    }
-    th, td {
-      padding: 0.05in; /* Reduced padding to fit content */
-      text-align: center;
-    }
-    th {
-      background-color: #f8f9fa;
-      font-weight: 600; /* Semi-bold font weight */
-    }
-    .table-bordered th, .table-bordered td {
-      border: 1px solid black;
-    }
-    #amt {
-      font-weight: 800; /* Bold font weight for total amount */
-    }
-    @media print {
-      table {
-        font-size: 0.6em; /* Further reduce font size if needed */
-      }
-      th, td {
-        padding: 0.05in; /* Reduce padding to fit content */
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container mt-2">
-    <img src="${logoUrl}" alt="Logo" class="logo"/>
-    <h3>குமரன் பவன்</h3>
-    <h6>15/15, தாழையாத்தம் பஜார்,<br>(சௌத் இண்டியன் பேங்க் எதிரில்) குடியாத்தம்.</h6>
-    <h3 class="mt-2">Bill Amount</h3>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Ser No.</th>
-          <th>Product</th>
-          <th>Price</th>
-          <th>Total (Unit)</th>
-          <th>Qty</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${bill.selectedProducts.map((product, productIndex) => `
-          <tr>
-            <td>${productIndex + 1}</td>
-            <td>${product.name}</td>
-            <td>${product.price.toFixed(2)}</td>
-            <td>${product.total.toFixed(2)}</td>
-            <td>${product.quantity}</td>
-            <td>${(product.total * product.quantity).toFixed(2)}</td>
-          </tr>
-        `).join('')}
-        <tr>
-          <td colspan="5" class="text-end fw-bold">Total Amount:</td>
-          <td id="amt">${bill.totalAmount.toFixed(2)}</td>
-        </tr>
-      </tbody>
-    </table>
-    <p><strong>Date and Time:</strong> ${createdAt}</p>
-    <div class="seal-space"></div>
-    <div class="footer">
-      ***Thank You***
-    </div>
-  </div>
-</body>
-</html>
-
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Print Bill</title>
+    </head>
+   <style>
+   td, th {
+    text-align: center;
+    padding: 6px; /* Add padding to create space between cells */
+}
+   h3, h6{
+    text-align: center;
+   }
+   #amt {
+    margin-top: 30px;
+}
+   </style>
+    <body>
+      <div>
+          <h3>குமரன் பவன்</h3>
+          <h6>15/15, தாழையாத்தம் பஜார்,<br>(சௌத் இண்டியன் பேங்க் எதிரில்) குடியாத்தம்.</h6>
+          <h3>Bill Amount</h3>
+          <table>
+          <thead>
+              <tr>
+                  <th>S.No.</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  
+                  <th>Qty</th>
+                  <th>Total</th>
+              </tr>
+          </thead>
+          <tbody>
+              ${bill.selectedProducts.map((product, index) => `
+                  <tr>
+                      <td>${index + 1}</td>
+                      <td>${product.name}</td>
+                      <td>${product.price.toFixed(2)}</td>
+                      
+                      <td>${product.quantity}</td>
+                      <td>${(product.total * product.quantity).toFixed(2)}</td>
+                  </tr>
+              `).join('')}
+              <tr>
+                  <td colspan="2">Total:</td>
+                  <td><b>${bill.totalAmount}</b></td>
+              </tr>
+          </tbody>
+      </table>
+      
+      </div>
+    </body>
+    </html>
+    
     `;
 
     printWindow.document.open();
